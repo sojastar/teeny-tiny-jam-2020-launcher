@@ -1,9 +1,36 @@
-def to_title(game)
-  return game.split('_').map(&:capitalize).join(' ')
-end
+# https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020
 
-def game_png(game)
-  return "screenshots/#{game}.png"
+class Hyperlink
+  attr :url, :clicked
+
+  def initialize(title, url)
+    @title   = title
+    @url     = url
+    @w, @h   = $gtk.calcstringbox(title)
+    @hovered = false
+    @clicked = false
+  end
+
+  def box
+    return [@x, @y - @h, @w, @h]
+  end
+
+  def inpt inputs
+    m  = inputs.mouse
+    p1 = m.point
+    p2 = m.click
+    @hovered = p1.inside_rect?(self.box) ? true : false
+    @clicked = true if p2&.inside_rect?(self.box)
+    return
+  end
+
+  def rndr x, y
+    @x = x
+    @y = y
+    a = { x: @x, y: @y, text: @title, r: 10, g: 238, b: 238}.label
+    b = { x: @x, y: @y - @h, w: @w + @w * 0.1, h: 2, r: 10, g: 238, b: 238}.solid if @hovered
+    return [a, b]
+  end
 end
 
 def label_list(x, y, strings, se = 0, ae = 0, r = 255, g = 255, b = 255, a = 255)
@@ -16,15 +43,25 @@ end
 
 os     = $gtk.exec('uname -s')
 OS     = os != '' && os.chomp || 'Windows'
-PATH   = File.expand_path File.dirname(__FILE__)
-GAMES  = $gtk.read_file('game_list.txt').split("\n").sort
-TITLES = GAMES.map { |game| to_title game }
+PATH   = $gtk.argv.split('/')[0..-3].join('/')
+GAMES  = $gtk.parse_json_file('entries.json')
+GAMES.each do |g|
+  g['aut_link'] = Hyperlink.new('Visit Author Page!', g['aut_url'])
+  g['jam_link'] = Hyperlink.new('Visit Jam Page!', g['jam_url'])
+end
 W, H   = 1280, 720
 
-def launch(game)
-  $gtk.exec("open .#{PATH}/Library/#{game}.app") if OS == 'Darwin'
-  $gtk.exec("./Library/#{game}.bin")             if OS == 'Linux'
-  $gtk.exec("cmd /c Library\\#{game}.exe")       if OS == 'Windows'
+def launch game
+  $gtk.exec("open \".#{PATH}/Library/#{game}.app\"")         if OS == 'Darwin'
+  $gtk.exec(".\"/Library/#{game}-linux-amd64.bin\"")         if OS == 'Linux'
+  $gtk.exec("cmd /c \"Library\\#{game}-windows-amd64.exe\"") if OS == 'Windows'
+  return
+end
+
+def openurl url
+  $gtk.exec("open \"#{url}\"")                              if OS == 'Darwin'  # TODO: Detatch process
+  $gtk.exec("xdg-open \"#{url}\" </dev/null &>/dev/null &") if OS == 'Linux'
+  $gtk.exec("cmd /c start \"#{url}\"")                      if OS == 'Windows'
   return
 end
 
@@ -63,6 +100,21 @@ def updt args, state
       state.play   = true
       state.x_set_to = -W
     end
+
+    link1 = GAMES[state.jdx]['aut_link']
+    link2 = GAMES[state.jdx]['jam_link']
+
+    link1.inpt(args.inputs)
+    link2.inpt(args.inputs)
+
+    if link1.clicked
+      link1.clicked = false
+      openurl(link1.url)
+    end
+    if link2.clicked
+      link2.clicked = false
+      openurl(link2.url)
+    end
   end
 
   state.shift_x = state.shift_x.towards(state.x_set_to, state.speed)
@@ -80,7 +132,7 @@ def updt args, state
   if state.play && state.xsnap
     state.wait_a_tick ||= args.tick_count
     if state.wait_a_tick.elapsed?(1)
-      launch(GAMES[state.idx])
+      launch(GAMES[state.idx]['run'])
       state.play = false
       state.x_set_to = 0
       state.wait_a_tick = nil
@@ -88,22 +140,26 @@ def updt args, state
   end
 end
 
-def rend args, state
+def rndr args, state
   menu = args.render_target(:menu)
-  menu.primitives << label_list_inv(20, 390, TITLES[0...state.idx], 0, 0, *[100]*3)
-  menu.primitives << [20, 360, TITLES[state.idx], 16, 0, [255]*3].label
-  menu.primitives << label_list(20, 300, TITLES[state.idx+1..-1], 0, 0, *[100]*3)
+  menu.primitives << label_list_inv(20, 390, GAMES[0...state.idx].map { |g| g['title'] }, 0, 0, *[100]*3)
+  menu.primitives << [20, 360, GAMES[state.idx]['title'], 16, 0, [255]*3].label
+  menu.primitives << label_list(20, 300, GAMES[state.idx+1..-1].map { |g| g['title'] }, 0, 0, *[100]*3)
 
   card = args.render_target(:card)
-  card.sprites << [640 - state.png_w.half, 360 - state.png_h.half, state.png_w, state.png_h, game_png(GAMES[state.jdx])]
+  card.sprites << [640 - state.png_w.half, 360 - state.png_h.half, state.png_w, state.png_h, GAMES[state.jdx]['png']]
+  card.labels  << [640 - state.png_w.half, 360 - state.png_h.half, "Author: #{GAMES[state.jdx]['author']}", [255]*3]
+  card.primitives  << GAMES[state.jdx]['aut_link'].rndr(640 - state.png_w.half, 330 - state.png_h.half)
+  card.primitives  << GAMES[state.jdx]['jam_link'].rndr(640 - state.png_w.half, 300 - state.png_h.half)
 
+  jdx = (state.jdx - state.iv) % state.idx_max
   nextcard = args.render_target(:nextcard)
-  nextcard.sprites << [640 - state.png_w.half, 360 - state.png_h.half, state.png_w, state.png_h, game_png(GAMES[(state.jdx-state.iv)%state.idx_max])]
+  nextcard.sprites << [640 - state.png_w.half, 360 - state.png_h.half, state.png_w, state.png_h, GAMES[jdx]['png']]
+  nextcard.labels  << [640 - state.png_w.half, 360 - state.png_h.half, "Author: #{GAMES[jdx]['author']}", [255]*3]
 
   args.outputs.background_color = [25]*3
   args.outputs.sprites << [state.shift_x, 0, W, H, :menu]
   args.outputs.sprites << [state.shift_x + W, 0, W, H, 'tiny_jam_logo.png']
-
   args.outputs.sprites << [state.shift_x, state.shift_y, W, H, :card]
   args.outputs.sprites << [state.shift_x, (state.iv < 0 ? -H : H) + state.shift_y, W, H, :nextcard]
 end
@@ -112,5 +168,5 @@ def tick args
   state = args.state
   init args, state if args.tick_count < 1
   updt args, state if args.tick_count > 30
-  rend args, state
+  rndr args, state
 end
