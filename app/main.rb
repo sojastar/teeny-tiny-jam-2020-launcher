@@ -1,12 +1,15 @@
 os = $gtk.exec('uname -s')
-OS = os != '' && os || 'Windows'
+OS = os != '' && os.chomp || 'Windows'
 GAMES = $gtk.read_file('game_list.txt').split("\n").sort
 
 def launch(game)
-  return $gtk.exec("") if OS == 'Darwin'
-  return $gtk.exec("./Library/#{game}.bin") if OS == 'Linux'
-  return $gtk.exec("cmd /c Library\\#{game}.exe") if OS == 'Windows'
+  $gtk.exec("") if OS == 'Darwin'
+  $gtk.exec("./Library/#{game}.bin") if OS == 'Linux'
+  $gtk.exec("cmd /c Library\\#{game}.exe") if OS == 'Windows'
+  return
 end
+
+LAUNCH = method(:launch)
 
 def to_title(game)
   return game.split('_').map(&:capitalize).join(' ')
@@ -41,15 +44,19 @@ def tick(args)
 
   if state.key.enter
     state.play    = true
-    state.fade    = 20
+    state.fade    = 25
     state.fade_to = 255
   end
   state.opac = state.opac.towards(state.fade_to, state.fade)
 
   if state.play && state.opac == state.fade_to
-    launch(state.game)
-    state.play = false
-    state.fade_to = 0
+    state.wait_a_tick ||= args.tick_count
+    if state.wait_a_tick.elapsed?(1)
+      launch(state.game)
+      state.play = false
+      state.fade_to = 0
+      state.wait_a_tick = nil
+    end
   end
 
   args.outputs.background_color = [25]*3
