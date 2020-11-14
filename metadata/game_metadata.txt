@@ -1,6 +1,6 @@
-devid=Hiro-r-b
-devtitle=Hiro-R-B
-gameid=TinyLauncher
-gametitle=TinyLauncher
+devid=PUTDEVHERE
+devtitle=PUTDEVHERE
+gameid=TeenyTinyJamLauncher
+gametitle=TeenyTinyJam Launcher
 version=0.1
 icon=metadata/icon.png
