@@ -15,7 +15,7 @@ JSON Format
         "aut_link": "Link to author's itch.io page",
         "jam_url": "Link to author's jam entry page",
         "description": "Game description"
-    }[, ...]
+    }
 ]
 ```
 Notes:
