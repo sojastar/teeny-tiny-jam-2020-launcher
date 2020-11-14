@@ -1,0 +1,6 @@
+devid=PUTDEVHERE
+devtitle=PUTDEVHERE
+gameid=TeenyTinyJamLauncher
+gametitle=TeenyTinyJam Launcher
+version=0.1
+icon=metadata/icon.png

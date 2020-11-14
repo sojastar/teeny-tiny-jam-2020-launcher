@@ -1,0 +1,98 @@
+[
+    {
+        "title": "Cat Herder 2020",
+        "png": "shots/cat_herder_2020.png",
+        "run": "cats",
+        "author": "danhealy",
+        "aut_url": "https://danhealy.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/815008"
+    },
+    {
+        "title": "Cloud Miner",
+        "png": "shots/cloud_miner.png",
+        "run": "cloud-miner",
+        "author": "phasefx",
+        "aut_url": "https://phasefx.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/770579"
+    },
+    {
+        "title": "DragonJump",
+        "png": "shots/dragonjump.png",
+        "run": "dragonjump",
+        "author": "Cutiekittypet",
+        "aut_url": "https://cutiekittypet.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/808418"
+    },
+    {
+        "title": "Dragon Quest Rush",
+        "png": "shots/dragon_quest_rush.png",
+        "run": "dragon-quest-rush",
+        "author": "meltinglight",
+        "aut_url": "https://meltinglight.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/815115"
+    },
+    {
+        "title": "Fake Moon",
+        "png": "shots/fake_moon.png",
+        "run": "fake-moon",
+        "author": "Grotesk (aka oeloeloel)",
+        "aut_url": "https://oeloeloel.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/800781"
+    },
+    {
+        "title": "Get Crackin",
+        "png": "shots/get_crackin.png",
+        "run": "GetCrackin",
+        "author": "phantomxii",
+        "aut_url": "https://phantomxii.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/817201"
+    },
+    {
+        "title": "Mother of Rugrats",
+        "png": "shots/mother_of_rugrats.png",
+        "run": "motorug",
+        "author": "Lernakow",
+        "aut_url": "https://lernakow.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/814757"
+    },
+    {
+        "title": "Pop It",
+        "png": "shots/pop_it.png",
+        "run": "pop-it",
+        "author": "GameDevMatt",
+        "aut_url": "https://onlymatt.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/808266"
+    },
+    {
+        "title": "Slay the Lich",
+        "png": "shots/slay_the_lich.png",
+        "run": "slaythelich",
+        "author": "HIRO-R-B",
+        "aut_url": "https://hiro-r-b.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/783403"
+    },
+    {
+        "title": "Spare 20?",
+        "png": "shots/spare_20.png",
+        "run": "Spare 20?",
+        "author": "fendogg",
+        "aut_url": "https://fendogg.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/785799"
+    },
+    {
+        "title": "Spotlight Search",
+        "png": "shots/spotlight_search.png",
+        "run": "spotlight-search",
+        "author": "Miriad",
+        "aut_url": "https://miriad.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/773260"
+    },
+    {
+        "title": "Vertices",
+        "png": "shots/vertices.png",
+        "run": "vertices",
+        "author": "ahnlak",
+        "aut_url": "https://ahnlak.itch.io/",
+        "jam_url": "https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020/rate/783121"
+    }
+]
