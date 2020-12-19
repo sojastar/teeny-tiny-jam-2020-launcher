@@ -423,6 +423,4 @@ def tick args
   init args, state if args.tick_count < 1
   updt args, state if args.tick_count > 30
   rndr args, state
-
-  args.outputs.debug << $gtk.current_framerate_primitives
 end
