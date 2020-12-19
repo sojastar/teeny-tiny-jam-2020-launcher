@@ -193,7 +193,7 @@ def label_list_inv(x, y, strings, max_h: 720, se: 0, ae: 0, r: 255, g: 255, b: 2
 end
 
 def launch name # Give it the JSON's 'run' string
-  $gtk.exec("open \".#{PATH}/Library/#{name}.app\"")         if OS == 'Darwin'
+  $gtk.exec("open \".#{PATH}/Library/#{name}.app\"")         if OS == 'Mac Os X'
   $gtk.exec(".\"/Library/#{name}-linux-amd64.bin\"")         if OS == 'Linux'
   $gtk.exec("cmd /c \"Library\\#{name}-windows-amd64.exe\"") if OS == 'Windows'
   return
@@ -210,7 +210,7 @@ end
 # Render Target 'Cards'... makes it easier to do a slide animation
 def card_rndr args, name, game
   card = args.render_target(name)
-  card.sprites << [640 - PNG_W.half, 360 - PNG_H.half, PNG_W, PNG_H, game['png']]
+  card.sprites << [640 - PNG_W.half, 360 - PNG_H.half, PNG_W, PNG_H, 'shots/' + game['png']]
   card.labels  << [640 - PNG_W.half, 360 - PNG_H.half, "Author: #{game['author']}", [255]*3]
 
   if game['aut_link']
@@ -228,9 +228,8 @@ end
 W, H = 1280, 720
 PNG_W, PNG_H = 315, 250
 
-os     = $gtk.exec('uname -s') # Get *nix OS
-OS     = os != '' && os.chomp || 'Windows' # Check and set which
-PATH   = $gtk.argv.split('/')[0..-3].join('/') # Only used for MacOS
+OS   = $gtk.platform
+PATH = $gtk.argv.split('/')[0..-3].join('/') # Only used for MacOS
 
 GAMES  = $gtk.parse_json_file('entries.json')
 # DEBUG: Fake Entries
@@ -366,11 +365,18 @@ end
 def rndr args, state
   case state.mode
   when :main
-    _, th = args.gtk.calcstringbox('a', 16)
+    tw, th = args.gtk.calcstringbox(GAMES[state.idx]['title'], 8)
+    mth = th
+    s = 8
+    while tw > 480
+      s /= 2
+      tw, mth = args.gtk.calcstringbox(GAMES[state.idx]['title'], s)
+    end
+
     menu = args.render_target(:menu)
     menu.primitives << [
       label_list_inv(20, 360 + th + 20, GAMES[0...state.idx].map { |g| g['title'] }, r: 80, g: 80, b: 80),
-      [(640 - PNG_W.half).half, 360 + th.half, GAMES[state.idx]['title'], 8, 1, [255]*3].label,
+      [(640 - PNG_W.half).half, 360 + mth.half, GAMES[state.idx]['title'], s, 1, [255]*3].label,
       label_list(20, 360 - th, GAMES[state.idx+1..-1].map { |g| g['title'] }, min_h: 40, r: 80, g: 80, b: 80),
       state.play_button,
       [870, 700, 410, 20, [0]*3].solid,
