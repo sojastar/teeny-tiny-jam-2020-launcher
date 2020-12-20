@@ -225,6 +225,15 @@
     "description": "Click in the ghosts to banish them and protect the mage, helping him reach the youth potion."
   },
   {
+    "title": "Simple",
+    "png": "teenytiny-samplegame.png",
+    "run": "teenytiny-samplegame",
+    "author": "Grotesk",
+    "aut_url": "https://oeloeloel.itch.io/",
+    "jam_url": "https://oeloeloel.itch.io/teenytiny-samplegame",
+    "description": "When the game tells you to click on a coloured shape, click on it. Don't make any mistakes! That's all there is to it!"
+  },
+  {
     "title": "Slay the Lich",
     "png": "slay-the-lich.png",
     "run": "slay-the-lich",
@@ -277,15 +286,6 @@
     "aut_url": "https://guitsaru.itch.io/",
     "jam_url": "https://guitsaru.itch.io/teeny-tiny-space-game",
     "description": "A 20 second space shooter"
-  },
-  {
-    "title": "Simple",
-    "png": "teenytiny-samplegame.png",
-    "run": "teenytiny-samplegame",
-    "author": "Grotesk",
-    "aut_url": "https://oeloeloel.itch.io/",
-    "jam_url": "https://oeloeloel.itch.io/teenytiny-samplegame",
-    "description": "When the game tells you to click on a coloured shape, click on it. Don't make any mistakes! That's all there is to it!"
   },
   {
     "title": "The Ghost Of Flash Ads Past",
