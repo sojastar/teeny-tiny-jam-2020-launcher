@@ -24,7 +24,7 @@
     "author": "ahnlak",
     "aut_url": "https://ahnlak.itch.io/",
     "jam_url": "https://ahnlak.itch.io/adrift",
-    "description": "The aim of the game is simple; keep your spaceship on the screen. How long can you last?"
+    "description": "adrift is a simple 'stay on the screen' game. Your spaceship is adrift, with an increasingly broken engine. Every time you fire it, it increases in power and can be ... sticky.\n\nThe aim of the game is simple; keep your spaceship on the screen. How long can you last?"
   },
   {
     "title": "BombChain",
@@ -33,7 +33,7 @@
     "author": "Kanaz312",
     "aut_url": "https://kanaz312.itch.io/",
     "jam_url": "https://kanaz312.itch.io/bombchain",
-    "description": "Blow up as many bombs as you can in one big chain reaction!"
+    "description": "Blow up as many bombs as you can! You get one chance to trigger bombs and two bombs to place after triggering.\n\nBlue bombs shoot out bullets, keeping the chain going. Red bombs destroy bullets.\n\nControls:\nMouse: Explode bombs, place bombs\nEnter: Start game\nArrows : Change number of bombs for next round\nR: randomize bomb starts\nD: Toggle debug mode for next round"
   },
   {
     "title": "Bug Count",
@@ -51,7 +51,7 @@
     "author": "Steria773",
     "aut_url": "https://rabios.itch.io/",
     "jam_url": "https://rabios.itch.io/cakestack",
-    "description": "Simple cake stacking game done in Ruby via DragonRuby GTK!"
+    "description": "Simple cake stacking game done in Ruby via DragonRuby GTK!\n\nControls\n\nJust, Click or hit space key to stack!"
   },
   {
     "title": "Cat Herder 2020",
@@ -60,7 +60,7 @@
     "author": "danhealy",
     "aut_url": "https://danhealy.itch.io/",
     "jam_url": "https://danhealy.itch.io/cats",
-    "description": "The ultimate 20-second herding cats simulator."
+    "description": "The ultimate 20-second herding cats simulator.\n\nInstructions: Click & drag cats onto the rug.  Get them all on the rug at the same time before the timer runs out."
   },
   {
     "title": "Cloud Miner",
@@ -69,7 +69,7 @@
     "author": "phasefx",
     "aut_url": "https://phasefx.itch.io/",
     "jam_url": "https://phasefx.itch.io/cloud-miner",
-    "description": "20 seconds for the TeenyTiny DragonRuby MiniGameJam"
+    "description": "20 seconds for the TeenyTiny DragonRuby MiniGameJam.\n\nLeft-click to find the hidden targets (or hold left-click for an easier time)."
   },
   {
     "title": "Collect the Dots",
@@ -78,7 +78,7 @@
     "author": "kfischer_okarin",
     "aut_url": "https://kfischer-okarin.itch.io/",
     "jam_url": "https://kfischer-okarin.itch.io/collect-the-dots",
-    "description": "Collect all the dots within 20 seconds."
+    "description": "Collect all the dots within 20 seconds.\n\nMove with the arrow keys."
   },
   {
     "title": "Deliver the Packages!",
@@ -87,7 +87,7 @@
     "author": "otaconio",
     "aut_url": "https://otaconio.itch.io/",
     "jam_url": "https://otaconio.itch.io/deliver-the-packages",
-    "description": "Deliver the packages before time runs out!"
+    "description": "Deliver packages to the green houses before time (or your gas tank) runs out!\n\nYou have 20 seconds to deliver the packages!\nUse WASD or the Arrow Keys to move around\nPick up fuel barrels to replenish your gas\nWarning: due to randomness, some level configurations may not be solvable!"
   },
   {
     "title": "Dink",
@@ -96,7 +96,7 @@
     "author": "jeorb, aecium",
     "aut_url": "https://jeorb.itch.io/",
     "jam_url": "https://jeorb.itch.io/dink",
-    "description": "Dink is a 20 second retro gaming hit of nostalgia."
+    "description": "Dink is a 20 second retro gaming hit of nostalgia.\n\nWASD or arrow keys control Dink's movement and space key shoots a rupee."
   },
   {
     "title": "Dragon Quest Rush",
@@ -114,7 +114,7 @@
     "author": "Cutiekittypet",
     "aut_url": "https://cutiekittypet.itch.io/",
     "jam_url": "https://cutiekittypet.itch.io/dragonjump",
-    "description": "Mini platformer game for TeenyTiny DragonRuby MiniGameJam."
+    "description": "Mini platformer game for TeenyTiny DragonRuby MiniGameJam.\n\nClick the left mouse button to jump. Try to get the highest score!"
   },
   {
     "title": "Emerald Eater",
@@ -123,7 +123,7 @@
     "author": "arkive",
     "aut_url": "https://arkive.itch.io/",
     "jam_url": "https://arkive.itch.io/emeraldeater",
-    "description": "Collect the emeralds. Avoid the red bumpers."
+    "description": "Collect the emeralds. Avoid the red bumpers. Each emerald is worth 1 point. Don't be too slow; every 10 seconds, the bumpers are cleared but 4 points are deducted. \n\nWASD / Arrow keys - move\n\nESC - pause\n\nENTER - restart"
   },
   {
     "title": "Fake Moon",
@@ -132,7 +132,7 @@
     "author": "Grotesk",
     "aut_url": "https://oeloeloel.itch.io/",
     "jam_url": "https://oeloeloel.itch.io/fake-moon",
-    "description": "Guide your fake moon to catch all the lunar landers. You have twenty seconds, don't miss any! It is inspired by a certain kind of old-school handheld game and is dedicated to conspiracy theorists everywhere."
+    "description": "Guide your fake moon to catch all the lunar landers. You have twenty seconds, don't miss any! It is inspired by a certain kind of old-school handheld game and is dedicated to conspiracy theorists everywhere.\n\nControls:\nLeft Arrow: go left\nRight Arrow: go right\nSPACE: start again"
   },
   {
     "title": "Get Crackin'",
@@ -141,7 +141,7 @@
     "author": "phantomxii",
     "aut_url": "https://phantomxii.itch.io/",
     "jam_url": "https://phantomxii.itch.io/get-crackin",
-    "description": "The difference between success and failure is twenty seconds! Crack that safe and claim the valuables within before the police arrive! But in order to do that, you must enter the combination properly!"
+    "description": "The difference between success and failure is twenty seconds! Crack that safe and claim the valuables within before the police arrive!\n\nBut in order to do that, you must enter the combination properly!\n\nEnter first number - [LEFT ARROW]\nEnter second number - [RIGHT ARROW] after first number is correct\nEnter third number - [LEFT ARROW] after second number is correct"
   },
   {
     "title": "Ghost Trap",
@@ -159,7 +159,7 @@
     "author": "dcsw",
     "aut_url": "https://dcsw.itch.io/",
     "jam_url": "https://dcsw.itch.io/lunar-drone-lander",
-    "description": "20 seconds to land on the moving landing pad without crashing into it."
+    "description": "You have 20 seconds to land on the moving platform without crashing into it. Note the green / red indicators in the top right for angle, vertical speed, and horizontal speed. \n\nSpacebar/Up/W for thrust. Left/Right or A/D for rotation."
   },
   {
     "title": "Mato - The TeenyTiny Tech Demo",
@@ -177,7 +177,7 @@
     "author": "ha1fie",
     "aut_url": "https://ha1fie.itch.io/",
     "jam_url": "https://ha1fie.itch.io/mean-muggin",
-    "description": "Catch the mug before it falls off the table!"
+    "description": "Catch the mug before it falls off the table!\n\n[SPACE] to catch\n[ESC] to exit to the title screen"
   },
   {
     "title": "Mother of Rugrats",
@@ -186,7 +186,7 @@
     "author": "Lernakow",
     "aut_url": "https://lernakow.itch.io/",
     "jam_url": "https://lernakow.itch.io/motorug",
-    "description": "Thou shall not sleep!"
+    "description": "Thou shall not sleep!\n\nInstructions\n\nUse LEFT and RIGHT arrows to rotate\nUse UP and DOWN arrows to move\nSWEETS attract RUGRATS\nSPROUTS repel RUGRAT\nSTOOLS block YOU, but RUGRATS crawl underneath\nFind PACIFIERS to WIN\nAvoid RUGRATS or LOSE"
   },
   {
     "title": "padok",
@@ -195,7 +195,7 @@
     "author": "toinebeg",
     "aut_url": "https://toinebeg.itch.io/",
     "jam_url": "https://toinebeg.itch.io/padok",
-    "description": "A simple maze game. Click on the octogons to find the path between the colored nodes."
+    "description": "A simple maze game.\n\nClick on the octogons to find the path between the colored nodes.\n\nAs the levels are totally random, you might be stuck, press r to generate another level or press q to go back to main menu."
   },
   {
     "title": "Persolvo",
@@ -213,7 +213,7 @@
     "author": "GameDevMatt",
     "aut_url": "https://onlymatt.itch.io/",
     "jam_url": "https://onlymatt.itch.io/pop-it",
-    "description": "here is the simple story of the Ninja who want to improve his skills, So he sets a timer of 20 Secs and tries to hit the balloon as many times as he is able. "
+    "description": "here is the simple story of the Ninja who want to improve his skills, So he sets a timer of 20 Secs and tries to hit the balloon as many times as he is able.\n\npush space button to start the arrow moving, and release the space button to launch the arrow!"
   },
   {
     "title": "Quest for the Youth Potion",
@@ -222,7 +222,16 @@
     "author": "Ninus Hideon",
     "aut_url": "https://ninus-hideon.itch.io/",
     "jam_url": "https://ninus-hideon.itch.io/quest-for-the-youth-potion",
-    "description": "Help the mage get his youth potion!"
+    "description": "Click in the ghosts to banish them and protect the mage, helping him reach the youth potion."
+  },
+  {
+    "title": "Simple",
+    "png": "teenytiny-samplegame.png",
+    "run": "teenytiny-samplegame",
+    "author": "Grotesk",
+    "aut_url": "https://oeloeloel.itch.io/",
+    "jam_url": "https://oeloeloel.itch.io/teenytiny-samplegame",
+    "description": "When the game tells you to click on a coloured shape, click on it. Don't make any mistakes! That's all there is to it!"
   },
   {
     "title": "Slay the Lich",
@@ -240,7 +249,7 @@
     "author": "HIRO-R-B",
     "aut_url": "https://hiro-r-b.itch.io/",
     "jam_url": "https://hiro-r-b.itch.io/slime-jump",
-    "description": "You're a slime and you like floaty orbs. Jump and catch them!"
+    "description": "You're a slime and you like floaty orbs. Jump and catch them!\n\nPress Space to jump\nPress R to reset"
   },
   {
     "title": "Spotlight Search",
@@ -258,7 +267,7 @@
     "author": "Cutiekittypet",
     "aut_url": "https://cutiekittypet.itch.io/",
     "jam_url": "https://cutiekittypet.itch.io/dragonrubyswatgame",
-    "description": "Swat as many bugs as you can in 20 seconds!"
+    "description": "Click the mouse to swat bugs! Swat as many bugs as you can in 20 seconds!"
   },
   {
     "title": "Teeny Tiny Smithy",
@@ -279,22 +288,13 @@
     "description": "A 20 second space shooter"
   },
   {
-    "title": "TeenyTiny DragonRuby MiniGameJam SimpleSample",
-    "png": "teenytiny-samplegame.png",
-    "run": "teenytiny-samplegame",
-    "author": "Grotesk",
-    "aut_url": "https://oeloeloel.itch.io/",
-    "jam_url": "https://oeloeloel.itch.io/teenytiny-samplegame",
-    "description": "When the game tells you to click on a coloured shape, click on it. Don't make any mistakes! That's all there is to it!"
-  },
-  {
     "title": "The Ghost Of Flash Ads Past",
     "png": "the-ghost-of-flash-ads-past.png",
     "run": "the-ghost-of-flash-ads-past",
     "author": "mikemar10",
     "aut_url": "https://mikemar10.itch.io/",
     "jam_url": "https://mikemar10.itch.io/the-ghost-of-flash-ads-past",
-    "description": "Relive the early 2000's and try to win a prize! Holiday Edition! Heavily inspired by the flash ads from the early 2000's that would demand you punch the monkey"
+    "description": "Relive the early 2000's and try to win a prize! Holiday Edition! Heavily inspired by the flash ads from the early 2000's that would demand you punch the monkey.\n\nAre you a bad enough dude to deliver 1,000 presents to Santa in 20 seconds?\n\nControls\n\nClick Santa as many times as you can in 20 seconds\n\nPress 'r' to restart the game"
   },
   {
     "title": "Tiny Plumbing",
@@ -303,7 +303,7 @@
     "author": "m4rek",
     "aut_url": "https://m4rek.itch.io/",
     "jam_url": "https://m4rek.itch.io/tiny-plumbing",
-    "description": "Connect the left side to the right side, click tiles to rotate them. You have 20 seconds to score as high as you can."
+    "description": "Connect the left side to the right side, click tiles to rotate them. You have 20 seconds to score as high as you can.\n\n1 point is awarded for each tile cleared by connecting. Connections are scored and cleared after a few seconds."
   },
   {
     "title": "Tiny Ski",
@@ -312,7 +312,7 @@
     "author": "spunos",
     "aut_url": "https://spunos.itch.io/",
     "jam_url": "https://spunos.itch.io/tiny-ski",
-    "description": "Move the mouse to control the skier. Don't hit any trees (or bears). Try to survive for 20 seconds!"
+    "description": "Move the mouse to control the skier. Click to restart. Don't hit any trees (or bears). Try to survive for 20 seconds!"
   },
   {
     "title": "V-naïr",
@@ -321,7 +321,7 @@
     "author": "jujule",
     "aut_url": "https://jujule.itch.io/",
     "jam_url": "https://jujule.itch.io/v-nair",
-    "description": "Bullet Hell meets QTE"
+    "description": "Bullet Hell meets QTE. Arrows to move\n\nSpace to shoot\n'c' to launch action when the energy bar is full"
   },
   {
     "title": "Vertices!",
