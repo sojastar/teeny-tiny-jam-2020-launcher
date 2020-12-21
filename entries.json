@@ -135,6 +135,15 @@
     "description": "Guide your fake moon to catch all the lunar landers. You have twenty seconds, don't miss any! It is inspired by a certain kind of old-school handheld game and is dedicated to conspiracy theorists everywhere.\n\nControls:\nLeft Arrow: go left\nRight Arrow: go right\nSPACE: start again"
   },
   {
+    "title": "First Guildmaster",
+    "png": "first-guildmaster.png",
+    "run": "first-guildmaster",
+    "author": "sinsiliux",
+    "aut_url": "https://sinsiliux.itch.io/",
+    "jam_url": "https://sinsiliux.itch.io/first-guildmaster",
+    "description": "Craft weaspons, sell them to heroes, buy new crafting stations to craft new components and increase your profit."
+  },
+  {
     "title": "Get Crackin'",
     "png": "get-crackin.png",
     "run": "get-crackin",
@@ -260,6 +269,16 @@
     "jam_url": "https://miriad.itch.io/spotlight-search",
     "description": "A cute \"keep him in the spotlight!\" game I whipped up as a sample for TeenyTiny DragonRuby MiniGameJam!"
   },
+  {
+    "title": "Spare 20?",
+    "png": "spare-20.png",
+    "run": "spare-20",
+    "author": "fendogg",
+    "aut_url": "https://fendogg.itch.io/",
+    "jam_url": "https://fendogg.itch.io/spare-20",
+    "description": "A simple, 20 second pattern matching game"
+  },
+
   {
     "title": "SwatGame",
     "png": "dragonrubyswatgame.png",
