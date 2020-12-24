@@ -1,426 +1,632 @@
-class Label # Just a label
-  def initialize x:, y:, text:, se: 0, ae: 0, r: 255, g: 255, b: 255, a: 255
-    @x = x
-    @y = y
-    @text = text
-    @se = se
-    @ae = ae
-    @r = r
-    @g = g
-    @b = b
-    @a = a
-
-    @w, @h = $gtk.calcstringbox(text, se)
-  end
-
-  def box
-    return [@x, @y - @h, @w, @h]
-  end
-
-  def draw_override ffi_draw
-    ffi_draw.draw_label @x, @y, @text, @se, @ae, @r, @g, @b, @a, nil
-  end
-end
-
-class LabelBox # Used for the description text, basically does text wrapping
-  def initialize x, y, w, h, text, fit: false, se: 0, ae: 0, r: 255, g: 255, b: 255, a: 255
-    @x = x
-    @y = y
-    @w = w
-    @h = h
-    @labels = []
-    @se = se
-    @ae = ae
-    @r = r
-    @g = g
-    @b = b
-    @a = a
-
-    set_text text, fit
-  end
-
-  def box
-    return [@x, @y, @w, @h]
-  end
-
-  def set_text text, fit = false
-    @text = text
-    unless fit
-      @labels = [
-        Label.new(x: @x, y: @y + @h, text: @text,
-                  se: @se, ae: @ae,
-                  r: @r, g: @g, b: @b, a: @a)
-      ]
-    else
-      text = text.split
-      idx = 0
-      until text.empty?
-        break if @y + @h - 20*idx <= @y
-        store = text.each_with_object([]) do |s, o|
-          w, _ = $gtk.calcstringbox((o+[s]).join(' '), @se)
-          break o if w > @w
-          o << s
-        end
-        text = text[store.length..-1]
-        @labels << Label.new(x: @x, y: @y + @h - 20*idx, text: store.join(' '),
-                             se: @se, ae: @ae,
-                             r: @r, g: @g, b: @b, a: @a)
-        idx += 1
-      end
-    end
-  end
-
-  def draw_override ffi_draw
-    idx  = 0
-    ilen = @labels.length
-    while idx < ilen
-      (@labels.value idx).draw_override ffi_draw
-      idx += 1
-    end
-  end
-end
-
-class Hyperlink < Label
-  attr :url, :clicked
-
-  def initialize x, y, title, url
-    super(x: x, y: y, text: title, r: 0, g: 238, b: 238)
-    @title   = title
-    @url     = url
-    @hovered = false
-    @clicked = false
-  end
-
-  def inpt inputs
-    m  = inputs.mouse
-    p1 = m.point
-    p2 = m.click
-    @hovered = p1.inside_rect?(self.box) ? true : false
-    @clicked &&= false
-    @clicked = true if p2&.inside_rect?(self.box)
-    return
-  end
-
-  def draw_override ffi_draw
-    ffi_draw.draw_solid @x, @y - @h, @w, @h * 0.1, @r, @g, @b, @a if @hovered
-    ffi_draw.draw_label @x, @y, @text, @se, @ae, @r, @g, @b, @a, nil
-    return
-  end
-
-  def primitive_marker
-    return :sprite
-  end
-end
-
-class Button
-  def initialize x, y, w, h, text, se: 0, ae: 1, r: 144, g: 238, b: 144, a: 255
-    @x = x
-    @y = y
-    @w = w
-    @h = h
-    @text = text
-    @se = se
-    @ae = ae
-    @r = r
-    @g = g
-    @b = b
-    @a = a
-    @tw, @th = $gtk.calcstringbox text, se
-    @hovered = false
-  end
-
-  def box
-    return [@x, @y, @w, @h]
-  end
-
-  def inpt inputs
-    p1 = inputs.mouse.point
-    @hovered = p1&.inside_rect?(self.box)
-    return
-  end
-
-  def clicked? inputs
-    p1 = inputs.mouse.click
-    return p1&.inside_rect?(self.box)
-  end
-
-  def draw_override ffi_draw
-    if @hovered
-      r, g, b = @r - 50, @g - 50, @b - 50
-    else
-      r, g, b = @r, @g, @b
-    end
-    ffi_draw.draw_solid @x, @y, @w, @h, r, g, b, @a
-    ffi_draw.draw_label @x + @w.half, @y + @h.half + @th.half, @text, @se, @ae, 0, 0, 0, @a, nil
-    return
-  end
-
-  def primitive_marker
-    return :sprite
-  end
-end
-
-# List of labels going downwards
-def label_list(x, y, strings, min_h: 20, se: 0, ae: 0, r: 255, g: 255, b: 255, a: 255)
-  return strings.take_while.with_index { |_, i| y - 20*i > min_h }.map_with_index do |str, i|
-    str = y - 20*i > min_h + 20 ? str : '[...]'
-    { x: x,
-      y: y - 20*i,
-      text: str,
-      size_enum: se,
-      alignment_enum: ae,
-      r: r,
-      g: g,
-      b: b,
-      a: a }.label
-  end
-end
-
-# List of labels going up
-def label_list_inv(x, y, strings, max_h: 720, se: 0, ae: 0, r: 255, g: 255, b: 255, a: 255)
-  return strings.reverse.take_while.with_index { |_, i| y + 20*i < max_h }.map_with_index do |str, i|
-    str = y + 20*i < max_h - 20 ? str : '[...]'
-    { x: x,
-      y: y + 20*i,
-      text: str,
-      size_enum: se,
-      alignment_enum: ae,
-      r: r,
-      g: g,
-      b: b,
-      a: a }.label
-  end
-end
-
-def launch name # Give it the JSON's 'run' string
-  $gtk.exec("open \".#{PATH}/Library/#{name}.app\"")         if OS == 'Mac Os X'
-  $gtk.exec(".\"/Library/#{name}-linux-amd64.bin\"")         if OS == 'Linux'
-  $gtk.exec("cmd /c \"Library\\#{name}-windows-amd64.exe\"") if OS == 'Windows'
-  return
-end
-
-def hyperlink_inpt(args, hyperlink) # if hyperlink, if clicked, open url
-  return unless hyperlink
-  hyperlink.inpt(args.inputs)
-  if hyperlink.clicked
-    $gtk.openurl(hyperlink.url)
-  end
-end
-
-# Render Target 'Cards'... makes it easier to do a slide animation
-def card_rndr args, name, game
-  card = args.render_target(name)
-  card.sprites << [640 - PNG_W.half, 360 - PNG_H.half, PNG_W, PNG_H, 'shots/' + game['png']]
-  card.labels  << [640 - PNG_W.half, 360 - PNG_H.half, "Author: #{game['author']}", [255]*3]
-
-  if game['aut_link']
-    card.labels << [
-      game['aut_link'],
-      game['jam_link'],
-      [640 - PNG_W.half, 270 - PNG_H.half, 'Support/Check out this author!', [255]*3].label
-    ]
-  end
-
-  description = game['description']
-  card.labels << LabelBox.new(870, 360 - PNG_H.half, 400, PNG_H, description, fit: true) if description
-end
-
 W, H = 1280, 720
 PNG_W, PNG_H = 315, 250
 
 OS   = $gtk.platform
 PATH = $gtk.argv.split('/')[0..-3].join('/') # Only used for MacOS
 
-GAMES  = $gtk.parse_json_file('entries.json')
-# DEBUG: Fake Entries
-# GAMES += [*('A'..'Z')].map do |c|
-#   { "title"   => "Fake #{c}",
-#     "png"     => "dragonruby.png",
-#     "run"     => "",
-#     "author"  => "Fake #{c}",
-#     "aut_url" => "",
-#     "jam_url" => "",
-#     "description" => "blah bla bla blah " * 15 }
-# end
+GAMES = $gtk.parse_json_file 'entries.json'
+BLACK = [0, 0, 0]
+JAM_URL = 'https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020'
 
-GAMES.each do |g| # Set default png if given png does not exist for whatever reason
-  g['png'] = 'dragonruby.png' unless g['png']&.end_with? '.png'
-end
+class Primitive
+  attr_accessor :x, :y, :w, :h, :r, :g, :b, :a
+  def primitive_marker; :sprite end
 
-GAMES.each do |g| # Create hyperlinks for each entry
-  g['aut_link'] = Hyperlink.new(640 - PNG_W.half, 330 - PNG_H.half, 'Visit Author Page!', g['aut_url']) if g['aut_url'] != ''
-  g['jam_link'] = Hyperlink.new(640 - PNG_W.half, 300 - PNG_H.half, 'Visit Jam Page!', g['jam_url'])    if g['jam_url'] != ''
-end
-
-def init args, state
-  state.key = args.inputs.keyboard.key_down
-
-  state.idx     = 0
-  state.idx_max = GAMES.length
-  state.jdx     = 0
-  state.iv      = 0
-  state.play    = false
-
-  state.shift    = false
-  state.shift_x  = -W
-  state.shift_y  = 0
-  state.speed    = 100
-  state.x_set_to = 0
-  state.y_set_to = 0
-
-  state.play_button     = Button.new(870, 20, 410, 80, 'PLAY', se: 16)
-  state.credits_button  = Button.new(1180, 700, 100, 20, 'CREDITS', r: 144, g: 238, b: 238)
-  state.exit_credits_bt = Button.new(1255, 695, 25, 25, '<', r: 238, g: 144, b: 144)
-
-  state.main_jam_link = Hyperlink.new(870, 720, 'Visit TeenyTiny Jam Page', 'https://itch.io/jam/teenytiny-dragonruby-minigamejam-2020')
-  state.aut_link      = GAMES[state.jdx]['aut_link']
-  state.jam_link      = GAMES[state.jdx]['jam_link']
-
-  state.mode = :main
-end
-
-def updt args, state
-  case state.mode
-  when :main
-    if !state.play && state.xsnap && state.ysnap
-      if state.key.enter || state.play_button.clicked?(args.inputs)
-        state.play     = true
-        state.x_set_to = -W
-      end
-
-      hyperlink_inpt args, state.main_jam_link
-      hyperlink_inpt args, state.aut_link
-      hyperlink_inpt args, state.jam_link
-
-      if state.key.c || state.credits_button.clicked?(args.inputs)
-        state.mode     = :credits
-        state.x_set_to = W
-      end
-    end
-
-    if state.key.up_down != 0
-      args.outputs.sounds << 'sounds/rollover2.wav'
-      state.iv   = state.key.up_down
-      state.idx -= state.iv
-      state.idx  = state.idx % state.idx_max
-
-      state.shift    = true
-      state.y_set_to = state.iv < 0 ? H : -H
-    end
-
-    wheel = args.inputs.mouse.wheel
-    if wheel
-      args.outputs.sounds << 'sounds/rollover2.wav'
-      state.iv   = wheel[:y]
-      state.idx -= state.iv
-      state.idx  = state.idx % state.idx_max
-
-      state.shift    = true
-      state.y_set_to = state.iv < 0 ? H : -H
-    end
-
-    state.play_button.inpt(args.inputs)
-    state.credits_button.inpt(args.inputs)
-
-    state.shift_x = state.shift_x.towards(state.x_set_to, state.speed)
-    state.shift_y = state.shift_y.towards(state.y_set_to, state.speed)
-    state.xsnap   = state.shift_x == state.x_set_to
-    state.ysnap   = state.shift_y == state.y_set_to
-
-    if state.shift && state.ysnap
-      state.jdx      = state.idx
-      state.shift    = false
-      state.shift_y  = 0
-      state.y_set_to = 0
-      state.aut_link = GAMES[state.jdx]['aut_link']
-      state.jam_link = GAMES[state.jdx]['jam_link']
-    end
-
-    if state.play && state.xsnap
-      state.wait_a_tick ||= args.tick_count
-      if state.wait_a_tick.elapsed?(1)
-        launch(GAMES[state.idx]['run'])
-        state.play = false
-        state.x_set_to = 0
-        state.wait_a_tick = nil
-      end
-    end
-
-  when :credits
-    state.exit_credits_bt.inpt(args.inputs)
-    if state.xsnap and state.key.c || state.exit_credits_bt.clicked?(args.inputs)
-      state.mode = :main
-      state.x_set_to = 0
-    end
-
-    state.shift_x = state.shift_x.towards(state.x_set_to, state.speed)
-    state.shift_y = state.shift_y.towards(state.y_set_to, state.speed)
-    state.xsnap   = state.shift_x == state.x_set_to
-    state.ysnap   = state.shift_y == state.y_set_to
+  def initialize x, y, w, h, r, g, b, a
+    @x, @y, @w, @h = x, y, w, h
+    @r, @g, @b, @a = r, g, b, a
   end
 
-  $gtk.exit if state.key.escape
+  def box; [@x, @y, @w, @h] end
 end
 
-def rndr args, state
-  case state.mode
-  when :main
-    tw, th = args.gtk.calcstringbox(GAMES[state.idx]['title'], 8)
-    mth = th
-    s = 8
-    while tw > 480
-      s /= 2
-      tw, mth = args.gtk.calcstringbox(GAMES[state.idx]['title'], s)
+class Solid < Primitive
+  def initialize x:, y:, w:, h:, r: 255, g: 255, b: 255, a: 255
+    super(x, y, w, h, r, g, b, a)
+  end
+
+  def set_rect(x:, y:, w:, h:)
+    @x, @y, @w, @h = x, y, w, h
+  end
+
+  def draw_override ffi_draw
+    ffi_draw.draw_solid @x, @y, @w, @h, @r, @g, @b, @a
+  end
+end
+
+class Border < Solid
+  def draw_override ffi_draw
+    ffi_draw.draw_border @x, @y, @w, @h, @r, @g, @b, @a
+  end
+end
+
+class Sprite < Primitive
+  attr_accessor :path
+
+  def initialize x:, y:, w:, h:, path:, a: 255
+    super(x, y, w, h, 0, 0, 0, a)
+    @path = path
+  end
+
+  def draw_override ffi_draw
+    ffi_draw.draw_sprite_2 @x, @y, @w, @h, @path, nil, @a
+  end
+end
+
+class Label < Primitive
+  attr_accessor :text, :se, :ae
+
+  def initialize x:, y:, text:, se: 0, ae: 0, r: 255, g: 255, b: 255, a: 255
+    @text = text
+    @se = se
+    @ae = ae
+
+    w, h = $gtk.calcstringbox text, se
+    super(x, y, w, h, r, g, b, a)
+  end
+
+  def text= str
+    @text = str
+    @w, @h = $gtk.calcstringbox str, se
+  end
+
+  def box
+    return [@x, @y - @h, @w, @h]           if @ae == 0
+    return [@x - @w.half, @y - @h, @w, @h] if @ae == 1
+    return [@x - @w, @y - @h, @w, @h]
+  end
+
+  def draw_override ffi_draw
+    ffi_draw.draw_label @x, @y, @text, @se, @ae, @r, @g, @b, @a, nil
+  end
+end
+
+class MultiLabel < Primitive
+  attr_reader :text
+  def initialize x:, y:, text:, se: 0, ae: 0, r: 255, g: 255, b: 255, a: 255
+    @se = se
+    @ae = ae
+    @sw, @sh = $gtk.calcstringbox ' ', se
+    super(x, y, 0, 0, r, g, b, a)
+    send :text=, text
+  end
+
+  def x= x
+    @x = x
+    @labels.each { |l| l.x = x }
+  end
+
+  def y= y
+    @y = y
+    @labels.each_with_index { |l, i| l.y = y - @sh * i }
+  end
+
+  def a= a
+    @a = a
+    @labels.each { |l| l.a = a }
+  end
+
+  def text= str
+    @text = str
+    @labels = str.split("\n").map_with_index do |line, i|
+      Label.new x: @x, y: @y - @sh * i, text: line, se: @se, ae: @ae, r: @r, g: @g, b: @b, a: @a
     end
+    __wh
+  end
+
+  def wrap count
+    @labels = @text.wrapped_lines(count).map_with_index do |line, i|
+      Label.new x: @x, y: @y - @sh * i, text: line, se: @se, ae: @ae, r: @r, g: @g, b: @b, a: @a
+    end
+    __wh
+  end
+
+  def __wh
+    @w = (@labels.map &:w).max
+    @h = @sh * @labels.length
+  end
+
+  def draw_override ffi_draw
+    i = 0
+    l = @labels.length
+    while i < l
+      (@labels.at i).draw_override ffi_draw
+      i += 1
+    end
+  end
+end
+
+class BoxLabel < Primitive
+  attr_accessor :text, :se, :ve, :ae
+  def initialize x:, y:, w:, h:, text:, se: 0, ve: 0, ae: 0, r: 255, g: 255, b: 255, a: 255
+    super(x, y, w, h, r, g, b, a)
+    @text = text
+    @se = se
+    @ve = ve
+    @ae = ae
+
+    @ml = MultiLabel.new x: x, y: y, text: text, se: se, ae: ae, r: r, g: g, b: b, a: a
+    __mxy
+  end
+
+  def x= x
+    @x = x
+    @ml.x = __mx
+  end
+
+  def y= y
+    @y = y
+    @ml.y = __my
+  end
+
+  def w= w
+    @w = w
+    @ml.x = __mx
+  end
+
+  def h= h
+    @h = h
+    @ml.y = __my
+  end
+
+  def a= a
+    @a = a
+    @ml.a = a
+  end
+
+  def set_rect(x:, y:, w:, h:)
+    send(:x=, x)
+    send(:y=, y)
+    send(:w=, w)
+    send(:h=, h)
+  end
+
+  def text= str
+    @text = text
+    @ml.text = str
+    @ml.wrap 40
+    __mxy
+  end
+
+  def __mxy
+    @ml.x = __mx
+    @ml.y = __my
+  end
+
+  def __mx
+    return @mx = @x + 2       if @ae == 0
+    return @mx = @x + @w.half if @ae == 1
+    return @mx = @x + @w
+  end
+
+  def __my
+    return @my = @y + @h                   if @ve == 0
+    return @my = @y + @h.half + @ml.h.half if @ve == 1
+    return @my = @y + @ml.h
+  end
+
+  def draw_override ffi_draw
+    @ml.draw_override ffi_draw
+  end
+end
+
+class LerpVar
+  attr_accessor :at, :a, :b
+  def initialize time, a: 0, b: 1
+    @time = time
+    @a    = a
+    @b    = b
+    @at   = a
+    @spd  = (b - a) / time
+  end
+
+  def on
+    @at = @at.towards(@b, @spd)
+  end
+
+  def off
+    @at = @at.towards(@a, @spd)
+  end
+
+  def * other
+    @at * other
+  end
+end
+
+module DrawOverride
+  def primitive_marker; :sprite end
+  def draw_override ffi_draw
+    i = 0
+    l = @primitives.length
+    while i < l
+      (@primitives.at i).draw_override ffi_draw
+      i += 1
+    end
+  end
+end
+
+class PngBox
+  include DrawOverride
+
+  def initialize args, layout, opts = nil
+    @layout = layout
+    @opts = { path: '',
+              w: PNG_W,
+              h: PNG_H,
+              fc: { r: 255, g:   0, b:   0, a: 255 } }
+    @opts.merge! opts if opts
+
+    @rect   = args.layout.rect @layout
+    x, y = @rect.x + @rect.w.half - @opts.w.half, @rect.y + @rect.h.half - @opts.h.half
+    @sprite = Sprite.new(x: x, y: y, w: @opts.w, h: @opts.h, path: @opts.path)
+    @border = Border.new(**@opts[:fc], x: x, y: y, w: @opts.w, h: @opts.h)
+
+    @primitives = [@sprite, @border]
+  end
+
+  def path= str
+    @opts.path = str
+    @sprite.path = str
+  end
+end
+
+class TextBox
+  include DrawOverride
+
+  def initialize args, layout, opts = nil
+    @layout = layout
+    @opts = { text: '',
+              bc: { r:   0, g:   0, b:   0, a: 255 },
+              fc: { r: 255, g:   0, b:   0, a: 255 },
+              tc: { r: 255, g: 255, b: 255, a: 255 },
+              ae: 1 }
+    @opts.merge! opts if opts
+
+    @rect   = args.layout.rect @layout
+    @solid  = Solid.new(**@opts[:bc], **@rect)
+    @border = Border.new(**@opts[:fc], **@rect)
+    @label  = BoxLabel.new(text: text, ve: 1, ae: @opts[:ae], **@opts[:tc], **@rect)
+
+    @primitives = [@solid, @border, @label]
+  end
+
+  def text
+    @opts[:text]
+  end
+
+  def text= str
+    @opts[:text] = str
+    @label.text  = str
+  end
+
+  def __lerp mult, v1, v2
+    return v1 + (v2 - v1) * mult
+  end
+
+  def lerp_by_layout mult, layout
+    rect = $args.layout.rect layout
+    r = {
+      x: (__lerp mult, @rect.x, rect.x),
+      y: (__lerp mult, @rect.y, rect.y),
+      w: (__lerp mult, @rect.w, rect.w),
+      h: (__lerp mult, @rect.h, rect.h),
+    }
+    @solid.set_rect(**r)
+    @border.set_rect(**r)
+    @label.set_rect(**r)
+  end
+
+  def set_a a
+    @solid.a  = a
+    @border.a = a
+    @label.a  = a
+  end
+end
+
+class Button < TextBox
+  def initialize args, layout, opts
+    super
+    @hovered_at = LerpVar.new 0.3.seconds, a: 0, b: 50
+  end
+
+  def updt
+    if hovered?
+      @hovered_at.on
+      e = @hovered_at.at
+      @solid.r = @opts[:bc].r + e
+      @solid.g = @opts[:bc].g + e
+      @solid.b = @opts[:bc].b + e
+    else
+      @hovered_at.off
+      e = @hovered_at.at
+      @solid.r = @opts[:bc].r + e
+      @solid.g = @opts[:bc].g + e
+      @solid.b = @opts[:bc].b + e
+    end
+
+    if clicked?
+      @hovered_at.at = 150
+      if @opts[:action]
+        case @opts[:args]
+        when Proc
+          @opts[:action].call @opts[:args].call
+        when Array
+          @opts[:action].call(*@opts[:args])
+        when NilClass
+          @opts[:action].call
+        else
+          @opts[:action].call @opts[:args]
+        end
+      end
+    end
+  end
+
+  def hovered?
+    return $args.inputs.mouse.point.intersect_rect? @rect
+  end
+
+  def clicked?
+    c = $args.inputs.mouse.click
+    return c.intersect_rect? @rect if c
+  end
+end
+
+class ScrollBoxes
+  include DrawOverride
+
+  def initialize args, list
+    @list = list
+    @len  = list.length
+
+    @snaps = [
+      { layout: { row: 0, col: 4, w: 0, h: 1 } },
+      (1..4).map do |i| { layout: { row: i, col: 0, w: 8, h: 1 } } end,
+      { layout: { row: 5, col: 0.5, w: 8, h: 2 } },
+      (7..10).map do |i| { layout: { row: i, col: 0, w: 8, h: 1 } } end,
+      { layout: { row: 11, col: 4, w: 0, h: 1 } }
+    ].flatten
+
+    @boxes = 11.times.map { |i| TextBox.new args, @snaps[i][:layout], { text: "Hello #{i}"} }
+    @boxes[0].set_a 0
+    @boxes[10].set_a 0
+
+    @primitives = @boxes
+
+    @time = 0.3.seconds
+    @at = 0
+    @move_to = 0
+    set_text 0
+
+    @snapped = true
+  end
+
+  def updt
+    if @at != @move_to || !@snapped
+      unless @shift_at
+        @shift_at = $args.tick_count
+        $args.outputs.sounds << "sounds/rollover2.wav"
+      end
+      if @snapped
+        set_text @at
+        @snapped = false
+      end
+      d = dist
+      dir = d < 0 ? -1 : 1
+      shift_lerp 0, dir if @olddir != dir
+      @olddir = dir
+      t = @time * (0.7 - 0.1 * d.abs)
+      e = @shift_at.ease t, :identity
+      shift_lerp e, -dir
+      if @shift_at.elapsed? t
+        @at += dir
+        @at = @at % @len
+        @snapped = true
+        @shift_at = nil #$args.tick_count
+        if @at == @move_to
+          set_text @at
+          shift_lerp 0, -dir
+        end
+      end
+    end
+  end
+
+  def move_to n
+    @move_to = n
+  end
+
+  def dist
+    a = @at
+    b = @move_to
+    if a > b
+      c = b - a
+      d = (a - @len) - b
+      return c.abs < d.abs ? c : -d
+    else
+      c = b - a
+      d = (b - @len) - a
+      return c.abs < d.abs ? c : d
+    end
+  end
+
+  def set_text n
+    @boxes.each_with_index do |b, i|
+      v = (-5 + n + i - @len) % @len
+      b.text = @list[v]
+    end
+  end
+
+  def shift_lerp mult, n
+    @boxes.each_with_index do |b, i|
+      v = (i + n) % 11
+      b.lerp_by_layout mult, @snaps[v][:layout]
+      if n > 0
+        b.set_a mult * 255 if i == 0
+        b.set_a 255 - mult * 255 if i == 9
+      else
+        b.set_a 255 - mult * 255 if i == 1
+        b.set_a mult * 255 if i == 10
+      end
+    end
+  end
+end
+
+module Launcher
+  attr_gtk
+
+  def self.tick
+    init if args.tick_count.zero?
+    updt
+    rndr
+  end
+
+  def self.init
+    @selection = 0
+
+    @boxes = ScrollBoxes.new args, GAMES.map { |h| h['title'] }
+
+    @info_author = TextBox.new args, { row: 1, col: 16, w: 8, h: 1 }, { text: "AUTHOR: #{GAMES[@selection]['author']}" }
+    @info_game   = TextBox.new args, { row: 2, col: 16, w: 8, h: 8 }, { text: GAMES[@selection]['description'] }
+
+    @menu_buttons = [
+      (Button.new args, { row:  0, col: 16, w: 2, h: 1 }, { text: "DEV PAGE", action: lambda { open_author_page } }),
+      (Button.new args, { row:  0, col: 18, w: 2, h: 1 }, { text: "GAME PAGE", action: lambda { open_game_page } }),
+      (Button.new args, { row:  0, col: 20, w: 2, h: 1 }, { text: "JAM PAGE", action: lambda { $gtk.openurl JAM_URL } }),
+      (Button.new args, { row:  0, col: 22, w: 2, h: 1 }, { text: "CREDITS", action: lambda { set_state :credits } }),
+      (Button.new args, { row: 10, col: 16, w: 8, h: 2 }, { text: "PLAY", action: lambda { set_state :play } })
+    ]
+
+    @png_box = PngBox.new args, { row: 3, col: 9, w: 6, h: 6 }, { path: '/shots/' + GAMES[@selection]['png'] }
+
+    @primitives = [
+      @boxes,
+      @info_author,
+      @info_game,
+      @menu_buttons,
+      @png_box
+    ]
 
     menu = args.render_target(:menu)
-    menu.primitives << [
-      label_list_inv(20, 360 + th + 20, GAMES[0...state.idx].map { |g| g['title'] }, r: 80, g: 80, b: 80),
-      [(640 - PNG_W.half).half, 360 + mth.half, GAMES[state.idx]['title'], s, 1, [255]*3].label,
-      label_list(20, 360 - th, GAMES[state.idx+1..-1].map { |g| g['title'] }, min_h: 40, r: 80, g: 80, b: 80),
-      state.play_button,
-      [870, 700, 410, 20, [0]*3].solid,
-      state.main_jam_link,
-      state.credits_button
-    ]
+    menu.primitives << @primitives
 
-    card_rndr(args, :card, GAMES[state.jdx])
-    card_rndr(args, :nextcard, GAMES[(state.jdx - state.iv) % state.idx_max])
+    @menu = [0, 0, 1280, 720, :menu]
 
-    args.outputs.background_color = [0]*3
-    args.outputs.sprites << [
-      [state.shift_x - W, 0, W, H, :credit_card],
-      [state.shift_x, state.shift_y, W, H, :card],
-      [state.shift_x, (state.iv < 0 ? -H : H) + state.shift_y, W, H, :nextcard],
-      [state.shift_x, 0, W, H, :menu],
-      [state.shift_x + W, 0, W, H, 'tiny_jam_logo.png']
-    ]
+    @credits = [0, 720, 1280, 720, 'credits.png']
+    @credits_close_bt = Button.new args, { row: 0, col: 22, w: 2, h: 1 }, { text: "^", action: lambda { set_state :menu } }
 
-  when :credits
-    # lol
-    credit_card = args.render_target(:credit_card)
-    credit_card.sprites << [
-      [0, 0, 1280, 720, 'credits.png'],
-      state.exit_credits_bt
-    ]
+    @logo = [1280, 0, 1280, 720, 'tiny_jam_logo.png']
 
-    args.outputs.background_color = [0]*3
-    args.outputs.sprites << [
-      [state.shift_x - W, 0, W, H, :credit_card],
-      [state.shift_x, 0, W, H, :card],
-      [state.shift_x, 0, W, H, :menu],
-    ]
+    @shift_y = LerpVar.new 0.3.seconds
+    @shift_x = LerpVar.new 0.3.seconds
+
+    @state = :menu
   end
 
-  args.outputs.primitives << [
-    [state.shift_x, 0, 1280, 20, 0, 0, 50].solid,
-    [state.shift_x + 640, 20, "MOVE: ↑/↓ or Mouse Wheel  PLAY: Enter  EXIT: Esc  CREDITS: c", 0, 1, [255]*3].label
-  ]
+  def self.updt
+    kd = keyboard.key_down
+    m  = inputs.mouse
+
+    $gtk.exit if kd.escape
+
+    case @state
+    when :menu
+      @boxes.updt
+      @menu_buttons.map &:updt
+
+      scroll m.wheel.y if m.wheel
+      scroll kd.up_down if kd.up_down != 0
+      scroll 1 if keyboard.key_held.r
+
+      set_state :play if kd.enter
+      set_state :credits if kd.c
+
+      @shift_x.off
+      @shift_y.off
+
+      @menu.x = @shift_x * -1280
+      @menu.y = @shift_y * -720
+      @credits.y = 720 - @shift_y * 720
+      @logo.x = 1280 - @shift_x * 1280
+    when :credits
+      @credits_close_bt.updt
+
+      set_state :menu if kd.c
+
+      @shift_x.off
+      @shift_y.on
+
+      @menu.y = @shift_y * -720
+      @credits.y = 720 - @shift_y * 720
+    when :play
+      @shift_x.on
+
+      @menu.x = @shift_x * -1280
+      @logo.x = 1280 - @shift_x * 1280
+
+      play if @shift_x.at == 1
+    end
+  end
+
+  def self.rndr
+    args.outputs.background_color = BLACK
+    case @state
+    when :menu
+      menu = args.render_target(:menu)
+      menu.primitives << @primitives
+      args.outputs.sprites << @menu
+
+      args.outputs.sprites << @credits if @shift_y.at > 0
+      args.outputs.sprites << @logo if @shift_x.at > 0
+    when :credits
+      args.outputs.sprites << @menu if @shift_y.at < 1
+      args.outputs.sprites << @credits
+      args.outputs.sprites << @credits_close_bt
+    when :play
+      args.outputs.sprites << @menu if @shift_x.at < 1
+      args.outputs.sprites << @logo
+    end
+    # args.outputs.debug << $gtk.current_framerate_primitives
+  end
+
+  def self.set_state state
+    @state = state
+  end
+
+  def self.scroll i
+    @selection = (@selection + i) % GAMES.length
+    @boxes.move_to @selection
+
+    @info_author.text = "AUTHOR: #{GAMES[@selection]['author']}"
+    @info_game.text   = GAMES[@selection]['description']
+    @png_box.path = '/shots/' + GAMES[@selection]['png']
+  end
+
+  def self.open_author_page
+    $gtk.openurl GAMES[@selection]['aut_url']
+  end
+
+  def self.open_game_page
+    $gtk.openurl GAMES[@selection]['jam_url']
+  end
+
+  def self.launch name # Give it the JSON's 'run' string
+    case OS
+    when 'Mac Os X' then $gtk.exec "open \".#{PATH}/Library/#{name}.app\""
+    when 'Linux'    then $gtk.exec ".\"/Library/#{name}-linux-amd64.bin\""
+    when 'Windows'  then $gtk.exec "cmd /c \"Library\\#{name}-windows-amd64.exe\""
+    end
+  end
+
+  def self.play
+    @wait ||= args.tick_count
+    if @wait.elapsed?(5)
+      launch(GAMES[@selection]['run'])
+      @wait = nil
+      @state = :menu
+    end
+  end
 end
 
 def tick args
-  state = args.state
-  init args, state if args.tick_count < 1
-  updt args, state if args.tick_count > 30
-  rndr args, state
+  Launcher.args = args
+  Launcher.tick
 end
